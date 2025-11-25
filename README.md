@@ -2,6 +2,9 @@
 
 This project aims to predict the survival of lung cancer patients using machine learning techniques. Given patient medical histories, demographics, and health records, the model performs binary classification to forecast whether a patient will survive post-treatment.
 
+<img width="1024" height="572" alt="image" src="https://github.com/user-attachments/assets/24774e38-5054-4d59-b536-dea1d0fd7283" />
+
+
 ## 🩺 Project Objective
 
 - Build a predictive system for lung cancer patient survival based on diagnosis data.
@@ -89,3 +92,5 @@ See the [LICENSE](LICENSE) file for license rights and limitations.
 
 **Contact:**  
 For questions or feedback, please open an issue or contact [@RutujaUjwala](https://github.com/RutujaUjwala).
+
+
