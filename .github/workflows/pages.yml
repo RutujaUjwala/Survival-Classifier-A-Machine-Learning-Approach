@@ -5,22 +5,51 @@ on:
     branches:
       - main
 
+# Required permissions for Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  build-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Show repo layout
+      - name: Show repo layout (debug)
         run: |
           echo "Repo root:"
           ls -la
           echo "docs folder contents (if any):"
           ls -la ./docs || true
 
-      - name: Build GitHub Pages site
-        uses: actions/jekyll-build-pages@v1
+      - name: Prepare site (use docs/ if present, otherwise build with Jekyll)
+        id: prepare
+        run: |
+          if [ -d "docs" ]; then
+            echo "Using docs/ as Pages source"
+            echo "SITE_PATH=docs" >> $GITHUB_ENV
+          else
+            echo "No docs/ folder found — building with Jekyll into _site"
+            # Install Jekyll (and bundler) then build. If you use a Gemfile, bundle install will be used.
+            gem install jekyll bundler --no-document || true
+            if [ -f "Gemfile" ]; then
+              bundle install || true
+              bundle exec jekyll build --destination ./_site
+            else
+              jekyll build --destination ./_site || true
+            fi
+            echo "SITE_PATH=_site" >> $GITHUB_ENV
+          fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          source: '.'
-          destination: './_site'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ env.SITE_PATH }}
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
